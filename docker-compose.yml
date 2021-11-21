@@ -97,7 +97,7 @@ services:
         aliases:
           - sts.auth.fynianwu.com
   db:
-    image: 'mcr.microsoft.com/mssql/server:2017-CU20-ubuntu-16.04'
+    image: 'registry-vpc.cn-beijing.aliyuncs.com/nianwu/mcr.microsoft.com-mssql-server:2017-CU20-ubuntu-16.04'
     ports:
       - '7900:1433'
     container_name: skoruba-identityserver4-db
