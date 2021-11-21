@@ -19,7 +19,10 @@ services:
           - admin-api.auth.fynianwu.com
     restart: always
   skoruba.identityserver4.admin:
-    image: '${DOCKER_REGISTRY-}skoruba-identityserver4-admin/:2.0.1'
+    image: 'skoruba/identityserver4-admin:2.0.1'
+    # build:
+    #   context: .
+    #   dockerfile: src/Skoruba.IdentityServer4.Admin/Dockerfile
     container_name: skoruba-identityserver4-admin
     environment:
       - VIRTUAL_HOST=admin.auth.fynianwu.com
@@ -54,7 +57,10 @@ services:
     networks:
       identityserverui: null
   skoruba.identityserver4.admin.api:
-    image: '${DOCKER_REGISTRY-}skoruba-identityserver4-admin-api:2.0.1'
+    image: 'skoruba/identityserver4-admin-api:2.0.1'
+    # build:
+    #   context: .
+    #   dockerfile: src/Skoruba.IdentityServer4.Admin.Api/Dockerfile
     container_name: skoruba-identityserver4-admin-api
     environment:
       - VIRTUAL_HOST=admin-api.auth.fynianwu.com
@@ -75,7 +81,10 @@ services:
     networks:
       identityserverui: null
   skoruba.identityserver4.sts.identity:
-    image: '${DOCKER_REGISTRY-}skoruba-identityserver4-sts-identity:2.0.1'
+    image: 'skoruba/identityserver4-sts-identity:2.0.1'
+    # build:
+    #   context: .
+    #   dockerfile: src/Skoruba.IdentityServer4.STS.Identity/Dockerfile
     container_name: skoruba-identityserver4-sts-identity
     environment:
       - VIRTUAL_HOST=sts.auth.fynianwu.com
