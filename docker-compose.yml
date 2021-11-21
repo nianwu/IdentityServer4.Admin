@@ -19,19 +19,19 @@ services:
           - admin-api.auth.fynianwu.com
     restart: always
   skoruba.identityserver4.admin:
-    image: 'skoruba/identityserver4-admin:2.0.1'
-    # build:
-    #   context: .
-    #   dockerfile: src/Skoruba.IdentityServer4.Admin/Dockerfile
+    image: '${COMPOSE_REGISTRY:-nianwu}/identity-server-admin:${COMPOSE_VERSION:-debug}'
+    build:
+      context: .
+      dockerfile: src/Skoruba.IdentityServer4.Admin/Dockerfile
     container_name: skoruba-identityserver4-admin
     environment:
       - VIRTUAL_HOST=admin.auth.fynianwu.com
-      - 'ConnectionStrings__ConfigurationDbConnection=Server=db;Database=IdentityServer4Admin;User Id=sa;Password=${DB_PASSWORD:-Password_123};MultipleActiveResultSets=true'
-      - 'ConnectionStrings__PersistedGrantDbConnection=Server=db;Database=IdentityServer4Admin;User Id=sa;Password=${DB_PASSWORD:-Password_123};MultipleActiveResultSets=true'
-      - 'ConnectionStrings__IdentityDbConnection=Server=db;Database=IdentityServer4Admin;User Id=sa;Password=${DB_PASSWORD:-Password_123};MultipleActiveResultSets=true'
-      - 'ConnectionStrings__AdminLogDbConnection=Server=db;Database=IdentityServer4Admin;User Id=sa;Password=${DB_PASSWORD:-Password_123};MultipleActiveResultSets=true'
-      - 'ConnectionStrings__AdminAuditLogDbConnection=Server=db;Database=IdentityServer4Admin;User Id=sa;Password=${DB_PASSWORD:-Password_123};MultipleActiveResultSets=true'
-      - 'ConnectionStrings__DataProtectionDbConnection=Server=db;Database=IdentityServer4Admin;User Id=sa;Password=${DB_PASSWORD:-Password_123};MultipleActiveResultSets=true'
+      - 'ConnectionStrings__ConfigurationDbConnection=server=db;database=IdentityServer4Admin;user=root;password=${DB_PASSWORD:-Password_123}'
+      - 'ConnectionStrings__PersistedGrantDbConnection=server=db;database=IdentityServer4Admin;user=root;password=${DB_PASSWORD:-Password_123}'
+      - 'ConnectionStrings__IdentityDbConnection=server=db;database=IdentityServer4Admin;user=root;password=${DB_PASSWORD:-Password_123}'
+      - 'ConnectionStrings__AdminLogDbConnection=server=db;database=IdentityServer4Admin;user=root;password=${DB_PASSWORD:-Password_123}'
+      - 'ConnectionStrings__AdminAuditLogDbConnection=server=db;database=IdentityServer4Admin;user=root;password=${DB_PASSWORD:-Password_123}'
+      - 'ConnectionStrings__DataProtectionDbConnection=server=db;database=IdentityServer4Admin;user=root;password=${DB_PASSWORD:-Password_123}'
       - 'AdminConfiguration__IdentityAdminBaseUrl=https://admin.auth.fynianwu.com'
       - 'AdminConfiguration__IdentityAdminRedirectUri=https://admin.auth.fynianwu.com/signin-oidc'
       - 'AdminConfiguration__IdentityServerBaseUrl=https://sts.auth.fynianwu.com'
@@ -42,13 +42,15 @@ services:
       - 'IdentityServerData__Clients__0__PostLogoutRedirectUris__0=https://admin.auth.fynianwu.com/signout-callback-oidc'
       - 'IdentityServerData__Clients__0__AllowedCorsOrigins__0=https://admin.auth.fynianwu.com'
       - 'IdentityServerData__Clients__1__RedirectUris__0=https://admin-api.auth.fynianwu.com/swagger/oauth2-redirect.html'
-      - 'Serilog__WriteTo__1__Args__connectionString=Server=db;Database=IdentityServer4Admin;User Id=sa;Password=${DB_PASSWORD:-Password_123};MultipleActiveResultSets=true'
+      - 'Serilog__WriteTo__1__Args__connectionString=server=db;database=IdentityServer4Admin;user=root;password=${DB_PASSWORD:-Password_123}'
       - DockerConfiguration__UpdateCaCertificate=true
       - ASPNETCORE_ENVIRONMENT=Development
+      - 'DatabaseProviderConfiguration__ProviderType=Mysql'
     command: dotnet Skoruba.IdentityServer4.Admin.dll /seed
     depends_on:
       - db
       - skoruba.identityserver4.sts.identity
+      - skoruba.identityserver4.admin.api
     volumes:
       - './shared/serilog.json:/app/serilog.json'
       - './shared/identitydata.json:/app/identitydata.json'
@@ -57,45 +59,47 @@ services:
     networks:
       identityserverui: null
   skoruba.identityserver4.admin.api:
-    image: 'skoruba/identityserver4-admin-api:2.0.1'
-    # build:
-    #   context: .
-    #   dockerfile: src/Skoruba.IdentityServer4.Admin.Api/Dockerfile
+    image: '${COMPOSE_REGISTRY:-nianwu}/identity-server-admin-api:${COMPOSE_VERSION:-debug}'
+    build:
+      context: .
+      dockerfile: src/Skoruba.IdentityServer4.Admin.Api/Dockerfile
     container_name: skoruba-identityserver4-admin-api
     environment:
       - VIRTUAL_HOST=admin-api.auth.fynianwu.com
       - AdminApiConfiguration__RequireHttpsMetadata=false
       - 'AdminApiConfiguration__ApiBaseUrl=https://admin-api.auth.fynianwu.com'
       - 'AdminApiConfiguration__IdentityServerBaseUrl=https://sts.auth.fynianwu.com'
-      - 'ConnectionStrings__ConfigurationDbConnection=Server=db;Database=IdentityServer4Admin;User Id=sa;Password=${DB_PASSWORD:-Password_123};MultipleActiveResultSets=true'
-      - 'ConnectionStrings__PersistedGrantDbConnection=Server=db;Database=IdentityServer4Admin;User Id=sa;Password=${DB_PASSWORD:-Password_123};MultipleActiveResultSets=true'
-      - 'ConnectionStrings__IdentityDbConnection=Server=db;Database=IdentityServer4Admin;User Id=sa;Password=${DB_PASSWORD:-Password_123};MultipleActiveResultSets=true'
-      - 'ConnectionStrings__AdminLogDbConnection=Server=db;Database=IdentityServer4Admin;User Id=sa;Password=${DB_PASSWORD:-Password_123};MultipleActiveResultSets=true'
-      - 'ConnectionStrings__AdminAuditLogDbConnection=Server=db;Database=IdentityServer4Admin;User Id=sa;Password=${DB_PASSWORD:-Password_123};MultipleActiveResultSets=true'
-      - 'ConnectionStrings__DataProtectionDbConnection=Server=db;Database=IdentityServer4Admin;User Id=sa;Password=${DB_PASSWORD:-Password_123};MultipleActiveResultSets=true'
+      - 'ConnectionStrings__ConfigurationDbConnection=server=db;database=IdentityServer4Admin;user=root;password=${DB_PASSWORD:-Password_123}'
+      - 'ConnectionStrings__PersistedGrantDbConnection=server=db;database=IdentityServer4Admin;user=root;password=${DB_PASSWORD:-Password_123}'
+      - 'ConnectionStrings__IdentityDbConnection=server=db;database=IdentityServer4Admin;user=root;password=${DB_PASSWORD:-Password_123}'
+      - 'ConnectionStrings__AdminLogDbConnection=server=db;database=IdentityServer4Admin;user=root;password=${DB_PASSWORD:-Password_123}'
+      - 'ConnectionStrings__AdminAuditLogDbConnection=server=db;database=IdentityServer4Admin;user=root;password=${DB_PASSWORD:-Password_123}'
+      - 'ConnectionStrings__DataProtectionDbConnection=server=db;database=IdentityServer4Admin;user=root;password=${DB_PASSWORD:-Password_123}'
       - DockerConfiguration__UpdateCaCertificate=true
       - ASPNETCORE_ENVIRONMENT=Development
+      - 'DatabaseProviderConfiguration__ProviderType=Mysql'
     volumes:
       - './shared/serilog.json:/app/serilog.json'
       - './shared/nginx/certs/cacerts.crt:/usr/local/share/ca-certificates/cacerts.crt'
     networks:
       identityserverui: null
   skoruba.identityserver4.sts.identity:
-    image: 'skoruba/identityserver4-sts-identity:2.0.1'
-    # build:
-    #   context: .
-    #   dockerfile: src/Skoruba.IdentityServer4.STS.Identity/Dockerfile
+    image: '${COMPOSE_REGISTRY:-nianwu}/identity-server-sts-identity:${COMPOSE_VERSION:-debug}'
+    build:
+      context: .
+      dockerfile: src/Skoruba.IdentityServer4.STS.Identity/Dockerfile
     container_name: skoruba-identityserver4-sts-identity
     environment:
       - VIRTUAL_HOST=sts.auth.fynianwu.com
-      - 'ConnectionStrings__ConfigurationDbConnection=Server=db;Database=IdentityServer4Admin;User Id=sa;Password=${DB_PASSWORD:-Password_123};MultipleActiveResultSets=true'
-      - 'ConnectionStrings__PersistedGrantDbConnection=Server=db;Database=IdentityServer4Admin;User Id=sa;Password=${DB_PASSWORD:-Password_123};MultipleActiveResultSets=true'
-      - 'ConnectionStrings__IdentityDbConnection=Server=db;Database=IdentityServer4Admin;User Id=sa;Password=${DB_PASSWORD:-Password_123};MultipleActiveResultSets=true'
-      - 'ConnectionStrings__DataProtectionDbConnection=Server=db;Database=IdentityServer4Admin;User Id=sa;Password=${DB_PASSWORD:-Password_123};MultipleActiveResultSets=true'
+      - 'ConnectionStrings__ConfigurationDbConnection=server=db;database=IdentityServer4Admin;user=root;password=${DB_PASSWORD:-Password_123}'
+      - 'ConnectionStrings__PersistedGrantDbConnection=server=db;database=IdentityServer4Admin;user=root;password=${DB_PASSWORD:-Password_123}'
+      - 'ConnectionStrings__IdentityDbConnection=server=db;database=IdentityServer4Admin;user=root;password=${DB_PASSWORD:-Password_123}'
+      - 'ConnectionStrings__DataProtectionDbConnection=server=db;database=IdentityServer4Admin;user=root;password=${DB_PASSWORD:-Password_123}'
       - 'AdminConfiguration__IdentityAdminBaseUrl=https://admin.auth.fynianwu.com'
       - 'AdvancedConfiguration__IssuerUri=https://sts.auth.fynianwu.com'
       - DockerConfiguration__UpdateCaCertificate=true
       - ASPNETCORE_ENVIRONMENT=Development
+      - 'DatabaseProviderConfiguration__ProviderType=Mysql'
     depends_on:
       - db
     volumes:
@@ -105,18 +109,37 @@ services:
       identityserverui:
         aliases:
           - sts.auth.fynianwu.com
+  # db:
+  #   image: 'registry-vpc.cn-beijing.aliyuncs.com/nianwu/mcr.microsoft.com-mssql-server:2017-CU20-ubuntu-16.04'
+  #   ports:
+  #     - '7900:1433'
+  #   container_name: skoruba-identityserver4-db
+  #   environment:
+  #     SA_PASSWORD: '${DB_PASSWORD:-Password_123}'
+  #     ACCEPT_EULA: 'Y'
+  #   volumes:
+  #     - 'dbdata:/var/opt/mssql'
+  #   networks:
+  #     identityserverui: null
+
   db:
-    image: 'registry-vpc.cn-beijing.aliyuncs.com/nianwu/mcr.microsoft.com-mssql-server:2017-CU20-ubuntu-16.04'
+    image: mysql:5.7.36
     ports:
-      - '7900:1433'
+      - '3306:3306'
+    command: --default-authentication-plugin=mysql_native_password
     container_name: skoruba-identityserver4-db
     environment:
-      SA_PASSWORD: '${DB_PASSWORD:-Password_123}'
-      ACCEPT_EULA: 'Y'
+      MYSQL_ROOT_PASSWORD: '${DB_PASSWORD:-Password_123}'
     volumes:
-      - 'dbdata:/var/opt/mssql'
+      - 'dbdata:/var/lib/mysql'
     networks:
       identityserverui: null
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
 volumes:
   dbdata:
     driver: local

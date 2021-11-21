@@ -5,16 +5,16 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
     volumes:
-      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ${APPDATA:-/var/lib/nw_identity_server_admin}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
   
   skoruba.identityserver4.admin.api:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
     volumes:
-      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ${APPDATA:-/var/lib/nw_identity_server_admin}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
 
   skoruba.identityserver4.sts.identity:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
     volumes:
-      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ${APPDATA:-/var/lib/nw_identity_server_admin}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
